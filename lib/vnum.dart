@@ -16,7 +16,7 @@ const VnumDefinition = const VnumTypeReflectable();
 @VnumDefinition
 @JsonSerializable()
 abstract class Vnum<T> {
-  final T value;
+  final T? value;
   const Vnum() : value = null;
 
   /// Returns an instance of Vnum with the provided value
@@ -36,16 +36,16 @@ abstract class Vnum<T> {
   /// var myVnum = MyVnum("my value");
   /// ```
   ///
-  factory Vnum.fromValue(T value, dynamic baseType) {
+  static dynamic fromValue(dynamic value, dynamic baseType) {
     return _fetchValue(value, baseType);
   }
 
   /// Find value through reflection, in case of no item, will return null
   static dynamic _fetchValue(dynamic rawValue, dynamic baseType) {
     //Mirror the base type
-    ClassMirror aMirror = VnumDefinition.reflectType(baseType);
+    ClassMirror aMirror = VnumDefinition.reflectType(baseType) as ClassMirror;
 
-    /// Get declerations
+    /// Get declarations
     final declarations = aMirror.declarations;
 
     /// Loop through variables and
@@ -58,20 +58,21 @@ abstract class Vnum<T> {
         continue;
       }
 
-      var value = parameterValue as VariableMirror;
+      var value = parameterValue;
 
       /// Ignore the property is not declared as static const
       if (!value.isStatic || !value.isConst) {
         continue;
       }
       var staticParam = aMirror.invokeGetter(value.simpleName);
-      var enumLoaded = staticParam as Vnum;
+      var enumLoaded = staticParam as Vnum?;
 
       /// Return if any property has a same value provided
       if (enumLoaded != null && enumLoaded.value == rawValue) {
         return enumLoaded;
       }
     }
+
     return null;
   }
 
@@ -79,9 +80,9 @@ abstract class Vnum<T> {
  static List<Vnum>  allCasesFor(dynamic object ) {
     List<Vnum> _result = [];
     //Mirror the base type
-    ClassMirror aMirror = VnumDefinition.reflectType(object);
+    ClassMirror aMirror = VnumDefinition.reflectType(object) as ClassMirror;
 
-    /// Get declerations
+    /// Get declarations
     final declarations = aMirror.declarations;
 
     /// Loop through variables and
@@ -94,14 +95,14 @@ abstract class Vnum<T> {
         continue;
       }
 
-      var value = parameterValue as VariableMirror;
+      var value = parameterValue;
 
       /// Ignore the property is not declared as static const
       if (!value.isStatic || !value.isConst) {
         continue;
       }
       var staticParam = aMirror.invokeGetter(value.simpleName);
-      var enumLoaded = staticParam as Vnum;
+      var enumLoaded = staticParam as Vnum?;
       if (enumLoaded != null) {
         _result.add(enumLoaded);
       }
@@ -114,7 +115,7 @@ abstract class Vnum<T> {
   dynamic toJson() => this.value;
   factory Vnum.fromJson(dynamic json) => Vnum.fromValue(json, Vnum);
 
-  /// Overriden the == operator
+  /// Overridden the == operator
   bool operator ==(o) => o is Vnum<T> && o.value == value;
   int get hashCode => value.hashCode;
 }
