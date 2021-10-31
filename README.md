@@ -27,7 +27,7 @@ class CarType extends Vnum<String> {
   const CarType.define(String fromValue) : super.define(fromValue);
   factory CarType(String value) => Vnum.fromValue(value,CarType);
 
-  /// (optional) Add these constructors if serilization is supported
+  /// (optional) Add these constructors if serialization is supported
   dynamic toJson() => this.value;
   factory CarType.fromJson(dynamic json) => CarType(json);
 
@@ -50,10 +50,10 @@ class CarType extends Vnum<String> {
 var car = CarType.sedan;
 var carValue = car.value;
 var carFromValue = CarType('suv-value');
-var nonExisting = CarType('rocket') /// returns null
+var nonExisting = CarType('rocket'); /// throws ArgumentException
 
 /// Vnum functions
-var color = car.color() /// returns "Green"
+var color = car.color(); /// returns "Green"
 
 /// Iterating cases
 var allCases = Vnum.allCasesFor(CarType);
@@ -63,7 +63,7 @@ print(allCases.length); /// prints 4
 ### Comparison:
 ```dart
 var sedan = CarType.sedan;
-var truck = CarType.truck
+var truck = CarType.truck;
 print(sedan == truck);
 ```
 ### Class member usage:
@@ -116,7 +116,7 @@ dev_dependencies:
   json_serializable: any
   ```
 
-Add a file ```build.yaml``` to your project's root folder or update the extisting file with the following code to your build.
+Add a file ```build.yaml``` to your project's root folder or update the existing file with the following code to your build.
 
 ```yaml
 targets:
@@ -173,7 +173,14 @@ static const MyEnum case2 = const MyEnum.define(value2);
 MyEnum.define(String fromValue) : super.define(fromValue);
 
 /// Used for loading enum using value
-factory MyEnum(String value) => Vnum.fromValue(value,MyEnum);
+factory MyEnum(String value) {
+  var objectClass = Vnum.fromValue(value, MyEnum);
+  if (objectClass != null) {
+    return objectClass;
+  }
+
+  throw ArgumentError('Unexpected type for data');
+}
 
 /// (optional) Support for serialization/deserialization
 dynamic toJson() => this.value;
