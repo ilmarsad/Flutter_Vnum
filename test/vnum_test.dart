@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:vnum/vnum.dart';
 import 'sample_response.dart';
 import 'test_types.dart';
@@ -22,9 +22,8 @@ void main() {
     final car4 = CarType("truck-value");
     expect(car4, CarType.truck);
 
-    /// Check Vnum returns null for invalid values 
-    final car5 = CarType("truck-value2");
-    expect(car5, null);
+    /// Check Vnum returns null for invalid values
+    expect(() => checkVnumFOrNullValues(), throwsA(isA()));
     
     /// Check equality
     var sedanIsNotTruck = car1 != car2;

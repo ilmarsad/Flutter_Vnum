@@ -26,9 +26,13 @@ void example() {
   print(scanTypeFetched.value); /// prints sedan-value
   print(scanTypeFetched == CarType.sedan); /// prints true
 
-  var unknownFruit = Fruit(99);
-  print(unknownFruit == null); /// prints true
-
+  /// prints Error message
+  try {
+    var unknownFruit = Fruit(99);
+    print(unknownFruit.value);
+  } on ArgumentError catch(e) {
+    print(e.message);
+  }
   /// Advanced Use
   var fruit = Fruit(3);
   print("banana has ${fruit.color()} color"); /// prints banana has Yellow color
@@ -64,7 +68,7 @@ void serializationExample() {
 class SampleResponse {
   
   @JsonKey(name: "carType")
-  CarType carType;
+  CarType? carType;
 
   SampleResponse();
   factory SampleResponse.fromJson(Map<String, dynamic> json) =>
